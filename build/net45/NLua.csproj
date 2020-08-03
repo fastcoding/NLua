@@ -33,15 +33,16 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="KeraLua, Version=1.2.4.0, Culture=neutral, PublicKeyToken=6a194c04b9c89217, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\KeraLua\build\net45\bin\x64\Release\KeraLua.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="KeraLua">
-      <Version>1.2.4</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="..\..\src\NLua.Shared.projitems" Label="Shared" Condition="Exists('..\..\src\NLua.Shared.projitems')" />

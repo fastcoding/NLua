@@ -50,7 +50,7 @@ namespace NLua
         /*
          * __index metafunction for CLR objects. Implemented in Lua.
          */
-        public const string LuaIndexFunction = @"local function a(b,c)local d=getmetatable(b)local e=d.cache[c]if e~=nil then return e else local f,g=get_object_member(b,c)if g then d.cache[c]=f end;return f end end;return a";
+        public const string LuaIndexFunction = @"local function a(b,c)local d=getmetatable(b)local e=d.cache[c]if e~=nil then return e else local f,g=luanet.get_object_member(b,c)if g then d.cache[c]=f end;return f end end;return a";
             //@"local function index(obj,name)
             //    local meta = getmetatable(obj)
             //    local cached = meta.cache[name]

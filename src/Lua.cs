@@ -16,7 +16,8 @@ using NLua.Extensions;
 
 using LuaState = KeraLua.Lua;
 using LuaNativeFunction = KeraLua.LuaFunction;
-
+using System.Diagnostics;
+using System.IO;
 
 namespace NLua
 {
@@ -265,29 +266,40 @@ namespace NLua
             luaState.SetTop(-2);
             Init();
         }
-
+        
         void Init()
         {
             _luaState.PushString("NLua_Loaded");
             _luaState.PushBoolean(true);
-            _luaState.SetTable((int)LuaRegistry.Index);
+            _luaState.SetTable((int)LuaRegistry.Index);//registry.NLua_loaded=true
+            //Trace.WriteLine("init luastate");
             if (_StatePassed == false)
-            {
+            {                
                 _luaState.NewTable();
                 _luaState.SetGlobal("luanet");
             }
-            _luaState.PushGlobalTable();
-            _luaState.GetGlobal("luanet");
+            
+            _luaState.GetGlobal("luanet");   
             _luaState.PushString("getmetatable");
             _luaState.GetGlobal("getmetatable");
-            _luaState.SetTable(-3);
-            _luaState.PopGlobalTable();
+            _luaState.SetTable(-3); //luanet.getmetatable=getmetatable, left luanet on top of stack
+            //_luaState.PopGlobalTable();//REG[2]=luanet ??
+            _luaState.Pop(1);
+
+            //_luaState.PopGlobalTable();
             _translator = new ObjectTranslator(this, _luaState);
-
-            ObjectTranslatorPool.Instance.Add(_luaState, _translator);
-
-            _luaState.PopGlobalTable();
-            _luaState.DoString(InitLuanet);
+             ObjectTranslatorPool.Instance.Add(_luaState, _translator);
+            _luaState.DoString(InitLuanet);            
+            string cfg = ".\\nlua.config";
+            if (File.Exists(cfg))
+            {
+                //Console.WriteLine("load config:" + Environment.CurrentDirectory);
+                string cfgscript = File.ReadAllText(cfg);
+                if (!_luaState.DoString(cfgscript))
+                {
+                    Trace.WriteLine("Error executing " + cfg);
+                }
+            }            
         }
 
         public void Close()

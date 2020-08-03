@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using KeraLua;
 using LuaState=KeraLua.Lua;
@@ -22,7 +23,26 @@ namespace NLua.Extensions
 
         public static void PopGlobalTable(this LuaState luaState)
         {
-            luaState.RawSetInteger(LuaRegistry.Index, (long) LuaRegistryIndex.Globals);
+            if (!luaState.IsTable(-1))
+            {
+                throw new Exception("expect table - "+luaState.Type(-1).ToString());
+            }
+            //REG[2]=value at top?
+            //luaState.RawSetInteger(LuaRegistry.Index, (long) LuaRegistryIndex.Globals);            
+            luaState.GetGlobal("setfenv");
+            if (!luaState.IsCFunction(-1))
+            {
+                throw new Exception("expect setfenv");
+            }
+            luaState.PushInteger(1);
+            luaState.PushCopy(-3);
+            try
+            {
+                luaState.Call(2, 0);
+            }catch(Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }            
         }
 
         public static void GetRef (this LuaState luaState, int reference)

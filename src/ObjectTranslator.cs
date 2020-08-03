@@ -92,13 +92,13 @@ namespace NLua
         private void CreateLuaObjectList(LuaState luaState)
         {
             luaState.PushString("luaNet_objects");
-            luaState.NewTable();
-            luaState.NewTable();
+            luaState.NewTable();// o={}
+            luaState.NewTable();  //t={}
             luaState.PushString("__mode");
             luaState.PushString("v");
-            luaState.SetTable(-3);
-            luaState.SetMetaTable(-2);
-            luaState.SetTable((int)LuaRegistry.Index);
+            luaState.SetTable(-3);   //t.__mode='v' 
+            luaState.SetMetaTable(-2);  //setmetatable(o,t)
+            luaState.SetTable((int)LuaRegistry.Index); //registry.luaNet_objects=o            
         }
 
         /*
@@ -109,7 +109,7 @@ namespace NLua
         {
             luaState.PushString("luaNet_indexfunction");
             luaState.DoString(MetaFunctions.LuaIndexFunction);
-            luaState.RawSet(LuaRegistry.Index);
+            luaState.RawSet(LuaRegistry.Index);//registry.luaNet_indexfunction=[LuaIndexFunction]
         }
 
         /*
@@ -121,17 +121,17 @@ namespace NLua
             luaState.NewMetaTable("luaNet_searchbase");
             luaState.PushString("__gc");
             luaState.PushCFunction(MetaFunctions.GcFunction);
-            luaState.SetTable(-3);
+            luaState.SetTable(-3);  //luaNet_searchbase.__gc=GcFunction
             luaState.PushString("__tostring");
             luaState.PushCFunction(MetaFunctions.ToStringFunction);
-            luaState.SetTable(-3);
+            luaState.SetTable(-3);  // //luaNet_searchbase.__tostring=ToStringFunction
             luaState.PushString("__index");
             luaState.PushCFunction(MetaFunctions.BaseIndexFunction);
-            luaState.SetTable(-3);
+            luaState.SetTable(-3);  //luaNet_searchbase.__index=BaseIndexFunction
             luaState.PushString("__newindex");
             luaState.PushCFunction(MetaFunctions.NewIndexFunction);
-            luaState.SetTable(-3);
-            luaState.SetTop(-2);
+            luaState.SetTable(-3);//luaNet_searchbase.__newindex=NewIndexFunction
+            luaState.SetTop(-2);  //pop 1
         }
 
         /*
@@ -163,24 +163,25 @@ namespace NLua
          */
         private void SetGlobalFunctions(LuaState luaState)
         {
+            luaState.GetGlobal("luanet");
             luaState.PushCFunction(MetaFunctions.IndexFunction);
-            luaState.SetGlobal("get_object_member");
+            luaState.SetField(-2,"get_object_member");
             luaState.PushCFunction(_importTypeFunction);
-            luaState.SetGlobal("import_type");
+            luaState.SetField(-2, "import_type");
             luaState.PushCFunction(_loadAssemblyFunction);
-            luaState.SetGlobal("load_assembly");
+            luaState.SetField(-2, "load_assembly");
             luaState.PushCFunction(_registerTableFunction);
-            luaState.SetGlobal("make_object");
+            luaState.SetField(-2, "make_object");
             luaState.PushCFunction(_unregisterTableFunction);
-            luaState.SetGlobal("free_object");
+            luaState.SetField(-2, "free_object");
             luaState.PushCFunction(_getMethodSigFunction);
-            luaState.SetGlobal("get_method_bysig");
+            luaState.SetField(-2, "get_method_bysig");
             luaState.PushCFunction(_getConstructorSigFunction);
-            luaState.SetGlobal("get_constructor_bysig");
+            luaState.SetField(-2, "get_constructor_bysig");
             luaState.PushCFunction(_ctypeFunction);
-            luaState.SetGlobal("ctype");
+            luaState.SetField(-2, "ctype");
             luaState.PushCFunction(_enumFromIntFunction);
-            luaState.SetGlobal("enum");
+            luaState.SetField(-2, "enum");
         }
 
         /*

@@ -1960,7 +1960,7 @@ namespace NLuaTest
         [Test]
         public void TestDebugHook()
         {
-            int[] lines = { 1, 2, 1, 3 };
+            int[] lines = { 1, 2, 1, 2,3 };
             int line = 0;
 
             using (var lua = new Lua())
